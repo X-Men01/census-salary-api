@@ -189,3 +189,5 @@ screenshots/*.jpeg
 *.pem
 secrets.json
 config.ini
+# generated EDA report
+census_report.html

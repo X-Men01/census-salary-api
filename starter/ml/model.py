@@ -1,4 +1,6 @@
+import joblib
 from sklearn.metrics import fbeta_score, precision_score, recall_score
+from sklearn.ensemble import RandomForestClassifier
 
 
 def train_model(X_train, y_train):
@@ -16,7 +18,10 @@ def train_model(X_train, y_train):
     model : RandomForestClassifier
         Trained machine learning model.
     """
-    pass
+    clf = RandomForestClassifier(
+        n_estimators=150, max_depth=8, min_samples_leaf=5, random_state=0
+    )
+    return clf.fit(X_train, y_train)
 
 
 def compute_model_metrics(y, preds):
@@ -56,4 +61,14 @@ def inference(model, X):
     preds : np.ndarray
         Predictions from the model.
     """
-    pass
+    return model.predict(X)
+
+
+def save(obj, path):
+    """Save a model, encoder or label binarizer to `path` with joblib."""
+    joblib.dump(obj, path)
+
+
+def load(path):
+    """Load an object saved with `save`."""
+    return joblib.load(path)
