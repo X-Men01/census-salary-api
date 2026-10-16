@@ -2,6 +2,8 @@ import joblib
 from sklearn.metrics import fbeta_score, precision_score, recall_score
 from sklearn.ensemble import RandomForestClassifier
 
+from starter.ml.data import process_data
+
 
 def train_model(X_train, y_train):
     """
@@ -45,6 +47,26 @@ def compute_model_metrics(y, preds):
     precision = precision_score(y, preds, zero_division=1)
     recall = recall_score(y, preds, zero_division=1)
     return precision, recall, fbeta
+
+
+def performance_on_slices(df, feature, model, encoder, lb, cat_features):
+    """Compute metrics for each unique value of a categorical feature.
+
+    Returns one formatted line per slice.
+    """
+    lines = []
+    for value in df[feature].unique():
+        slice_df = df[df[feature] == value]
+        X, y, _, _ = process_data(
+            slice_df, categorical_features=cat_features, label="salary",
+            training=False, encoder=encoder, lb=lb,
+        )
+        preds = inference(model, X)
+        p, r, f1 = compute_model_metrics(y, preds)
+        lines.append(
+            f"{feature}={value} n={len(X)} P={p:.3f} R={r:.3f} F1={f1:.3f}"
+        )
+    return lines
 
 
 def inference(model, X):

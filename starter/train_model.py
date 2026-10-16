@@ -7,7 +7,8 @@ from sklearn.model_selection import train_test_split
 
 from starter.ml.data import process_data
 from starter.ml.model import (
-    compute_model_metrics, inference, save, train_model
+    compute_model_metrics, inference, performance_on_slices, save,
+    train_model,
 )
 # Add the necessary imports for the starter code.
 
@@ -58,3 +59,10 @@ save(encoder, encoder_path)
 lb_path = Path(__file__).resolve().parents[1] / "model" / "lb.joblib"
 
 save(lb, lb_path)
+
+with open('slice_output.txt', 'w') as file:
+    for feature in cat_features:
+        lines = performance_on_slices(
+            test, feature, model, encoder, lb, cat_features
+        )
+        file.write("\n".join(lines) + "\n")
